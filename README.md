@@ -1,5 +1,8 @@
 # A generic DSL for generating agent for Google dialogFlow ES
 
+This is an individual portfolio assignment, based on a group project. The original group project codebase can be found at: 
+https://github.com/NJohansen/dialogFlowDSL 
+
 The syntax for the language can be seen in the examples `dialogFlow.df`, `alarm.df` and `flightBooking.df`.
 
 This is just one of the examples.
