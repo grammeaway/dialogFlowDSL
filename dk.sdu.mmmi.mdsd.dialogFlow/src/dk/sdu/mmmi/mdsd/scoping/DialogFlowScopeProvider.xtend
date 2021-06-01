@@ -11,6 +11,13 @@ import dk.sdu.mmmi.mdsd.dialogFlow.DialogFlowPackage
 import org.eclipse.xtext.EcoreUtil2
 import dk.sdu.mmmi.mdsd.dialogFlow.Entity
 import org.eclipse.xtext.scoping.Scopes
+import dk.sdu.mmmi.mdsd.dialogFlow.DialogFlowSystem
+import dk.sdu.mmmi.mdsd.dialogFlow.SuperSystem
+import dk.sdu.mmmi.mdsd.dialogFlow.ActionValue
+import dk.sdu.mmmi.mdsd.dialogFlow.Mapping
+import java.util.HashSet
+import dk.sdu.mmmi.mdsd.dialogFlow.Declaration
+import java.util.ArrayList
 
 /**
  * This class contains custom scoping description.
@@ -19,14 +26,38 @@ import org.eclipse.xtext.scoping.Scopes
  * on how and when to use it.
  */
 class DialogFlowScopeProvider extends AbstractDialogFlowScopeProvider {
-	/*override IScope getScope(EObject context, EReference reference) {
+	
+	override IScope getScope(EObject context, EReference reference) {
 		switch context {
-			ResponseValue case reference==DialogFlowPackage.Literals.RESPONSE_VALUE : {
-				val entity = EcoreUtil2.getContainerOfType(context, Entity)
-				 
-				return Scopes.scopeFor(entity)
+			ActionValue case reference==DialogFlowPackage.Literals.ACTION_VALUE__TYPE : {
+				val seen = new HashSet<DialogFlowSystem>
+				val candidates = new ArrayList<Declaration>
+				var system = EcoreUtil2.getContainerOfType(context,DialogFlowSystem)
+				while(system!==null) { 
+					if(seen.contains(system)) {return super.getScope(context, reference);}
+					seen.add(system)
+					candidates.addAll(system.declarations.filter(Entity))
+					if(system.superSystem!== null) {system = system.superSystem.extendedSystem}
+					else {system = null}
+				}
+				return Scopes.scopeFor(candidates)
+			}
+			
+			Mapping case reference==DialogFlowPackage.Literals.MAPPING__ENTITY : {
+				val seen = new HashSet<DialogFlowSystem>
+				val candidates = new ArrayList<Declaration>
+				var system = EcoreUtil2.getContainerOfType(context,DialogFlowSystem)
+				while(system!==null) { 
+					if(seen.contains(system)) {return super.getScope(context, reference);}
+					seen.add(system)
+					candidates.addAll(system.declarations.filter(Entity))
+					if(system.superSystem!== null) {system = system.superSystem.extendedSystem}
+					else {system = null}
+				}
+				return Scopes.scopeFor(candidates)
 			}
 		}
 		super.getScope(context, reference)
-	}*/
+	}
+
 }

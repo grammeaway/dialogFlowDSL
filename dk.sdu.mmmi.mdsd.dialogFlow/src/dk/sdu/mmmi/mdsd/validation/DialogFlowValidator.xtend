@@ -12,6 +12,9 @@ import dk.sdu.mmmi.mdsd.dialogFlow.ResponseValue
 import org.eclipse.xtext.EcoreUtil2
 import dk.sdu.mmmi.mdsd.dialogFlow.Intent
 import java.util.ArrayList
+import dk.sdu.mmmi.mdsd.dialogFlow.SuperSystem
+import java.util.Set
+import java.util.HashSet
 
 /**
  * This class contains custom validation rules. 
@@ -19,10 +22,40 @@ import java.util.ArrayList
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
 class DialogFlowValidator extends AbstractDialogFlowValidator {
+		
+	@Check
+	def checkNoCyclicInheritance(SuperSystem superSystem) {
+		var system = EcoreUtil2.getContainerOfType(superSystem, DialogFlowSystem);
+
+		val seen = new HashSet<String>
+		seen.add(system.name)
+		if(system.superSystem.extendedSystem.selfExtends(seen)) {
+			error('Cyclic inheritance',DialogFlowPackage.Literals.SUPER_SYSTEM__EXTENDED_SYSTEM,"cyclicInheritance")
+		}
+	}
+	
+	def boolean selfExtends(DialogFlowSystem next, Set<String> seen) {
+		if(next===null) false
+		else if(seen.contains(next.name)) true
+		else { seen.add(next.name) next.superSystem.extendedSystem.selfExtends(seen) }
+	}
 	
 	@Check
 	def checkUniqueIntentAndEntityName(Declaration declaration) {
 		var system = EcoreUtil2.getContainerOfType(declaration, DialogFlowSystem);
+		
+		var superSystem = system.superSystem.extendedSystem;
+		
+		var timesFoundSuper = 0;
+		for (Declaration de : superSystem.declarations) {
+			if (declaration.name.equals(de.name)) {
+				timesFoundSuper++;
+				if (timesFoundSuper > 0) {
+					error ("Declaration name is not unique (already declared in super system)", DialogFlowPackage.Literals.DECLARATION__NAME, "invalidNameSuperSystem");
+					return;
+				}
+			}
+		}
 		
 		var timesFound = 0;
 		for (Declaration de : system.declarations) {
@@ -39,7 +72,9 @@ class DialogFlowValidator extends AbstractDialogFlowValidator {
 	@Check
 	def checkResponses(ResponseValue responseValue) {
 		var intent = EcoreUtil2.getContainerOfType(responseValue, Intent);
-			
+		var system = EcoreUtil2.getContainerOfType(responseValue, DialogFlowSystem);
+		var superSystem = system.superSystem.extendedSystem
+		
 		var actionValues = new ArrayList<String>();
 		for (ActionValue action : intent.action.actions) {
 			actionValues.add(action.value);

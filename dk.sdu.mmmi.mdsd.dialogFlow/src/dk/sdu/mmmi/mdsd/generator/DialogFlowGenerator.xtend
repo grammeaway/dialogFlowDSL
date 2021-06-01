@@ -20,18 +20,27 @@ class DialogFlowGenerator extends AbstractGenerator {
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
 		val baseSystem = resource.allContents.filter(DialogFlowSystem).next
+		val baseSystemName = baseSystem.name
 
-		val rootElementCreator = new RootElementCreator(baseSystem.name)
+		var system = baseSystem
+			
+		val rootElementCreator = new RootElementCreator(baseSystemName)
 		rootElementCreator.generateElements(baseSystem, fsa)
 		
-		val entityCreator = new EntityCreator(baseSystem.name)
-		for (e: resource.allContents.toIterable.filter(Entity)) {
-			entityCreator.generateEntity(e, fsa)
-		}
-
-		val intentCreator = new IntentCreator(baseSystem.name)
-		for (i: resource.allContents.toIterable.filter(Intent)) {
-			intentCreator.generateIntent(i, fsa)
+		while(system!==null) {
+		
+			val entityCreator = new EntityCreator(baseSystemName)
+			for (e: system.declarations.filter(Entity))  {
+				entityCreator.generateEntity(e, fsa)
+			}
+				
+			val intentCreator = new IntentCreator(baseSystemName)
+			for (i: system.declarations.filter(Intent))  {
+				intentCreator.generateIntent(i, fsa)
+			}
+			
+			if(system.superSystem!== null) {system = system.superSystem.extendedSystem}
+			else {system = null}
 		}
 	}
 }

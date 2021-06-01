@@ -3,15 +3,15 @@ grammar dk.sdu.mmmi.mdsd.DialogFlow with org.eclipse.xtext.common.Terminals
 generate dialogFlow "http://www.sdu.dk/mmmi/mdsd/DialogFlow"
 	
 DialogFlowSystem:
-	'system' name=ID declarations+=Declaration*
+	'system' name=ID (superSystem=SuperSystem)? declarations+=Declaration*
 ;
 
 Declaration:
-	Intent | Entity | Extension
+	Intent | Entity 
 ;
 
-Extension:
-	'extends' name=ID
+SuperSystem:
+	'extends' extendedSystem=[DialogFlowSystem]
 ;
 
 Intent:
