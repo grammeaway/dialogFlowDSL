@@ -11,7 +11,6 @@ import org.eclipse.xtext.naming.QualifiedName
 class DialogFlowResourceDescriptionStrategy extends DefaultResourceDescriptionStrategy{
 	override createEObjectDescriptions(EObject eObject, IAcceptor<IEObjectDescription> acceptor) {
 		if(eObject instanceof DialogFlowSystem) {
-			println(eObject.name)
 			acceptor.accept(EObjectDescription.create(QualifiedName.create(eObject.name), eObject))
 			return true
 		}

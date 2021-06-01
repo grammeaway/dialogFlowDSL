@@ -1,4 +1,5 @@
 system Flight
+  extends Booking
   entity refundable 
     reference "true" synonyms "refundable", "with refund"
   entity location 

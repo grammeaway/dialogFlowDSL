@@ -3,11 +3,12 @@
 This is an individual portfolio assignment, based on a group project. The original group project codebase can be found at: 
 https://github.com/NJohansen/dialogFlowDSL 
 
-The syntax for the language can be seen in the examples `dialogFlow.df`, `alarm.df` and `flightBooking.df`.
+`alarm.df`, `booking.df`,`hotelBooking.df` and `flightBooking.df` all contain examples of the DSL. Some of them extend each other.
 
 This is just one of the examples.
 ```
-system Booking
+system HotelBooking
+  extends Booking
   entity venue_accomodation_chain 
     reference "Hilton" 
     reference "Hilton one" synonym "Hotel two"
@@ -37,4 +38,5 @@ system Booking
       param venue_type type venue_accomodation_type "venue-type" 
       param venue_chain type venue_accomodation_chain "venue-chain" islist
       param star type star "star" 
+
 ```
