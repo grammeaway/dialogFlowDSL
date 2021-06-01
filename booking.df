@@ -1,0 +1,18 @@
+system Booking 
+    intent Welcome
+        phrases
+            expression "Hello" 
+            expression "Hi"
+            expression "I require assistance"
+        responses 
+            reply "Welcome. I can help you make a booking."
+            reply "Hello. Would you like to make a booking?"
+            reply "Hi there. I can help you book make a booking. Would you like my help?"
+    intent ConfirmBooking
+        phrases
+            expression "I confirm my booking."
+            expression "Please complete the booking." 
+            expression "Yes, please finalize the booking." 
+        responses 
+            reply "Thank you! Your booking has been completed."
+            reply  "Okay, I have finalized the requested booking."
